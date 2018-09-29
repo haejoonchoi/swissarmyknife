@@ -8,6 +8,7 @@ import datetime
 import hashlib
 import logging
 import os
+import re
 import sys
 
 
@@ -140,6 +141,45 @@ class NameMatcher(object):
 
     def __repr__(self): return self.NAME
 
+class FuzzyNameMatcher(object):
+    NAME = "fuzzy"
+
+    def find_duplicates(self, root_dir, show_progress):
+        with Progress(show_progress) as p:
+            result = {}
+            for base_dir, _, file_names in os.walk(root_dir):
+                for file_name in file_names:
+                    p.step()
+                    path = os.path.join(base_dir, file_name)
+                    fuzzy_name = self.normalize_path(path)
+                    if fuzzy_name not in result:
+                        result[fuzzy_name] = []
+                    result[fuzzy_name].append(path)
+
+        return prune(result)
+
+    def __repr__(self): return self.NAME
+
+    @staticmethod
+    def normalize_path(path):
+        parts = path.lower().split("/")
+        n = len(parts)
+        if n == 0:
+            return ""
+        elif n == 1:
+            return FuzzyNameMatcher.normalize_part(parts[0])
+        else:
+            return FuzzyNameMatcher.normalize_part(parts[-2]) + "/" + FuzzyNameMatcher.normalize_part(parts[-1])
+
+    @staticmethod
+    def normalize_part(s):
+        orig_n, orig_ext = os.path.splitext(os.path.basename(s))
+        return FuzzyNameMatcher.normalize_fragment(orig_n) + FuzzyNameMatcher.normalize_fragment(orig_ext)
+
+    @staticmethod
+    def normalize_fragment(s):
+        return re.sub("[_\- ]+", " ", s)
+
 ##################################################
 
 class DoNotRemoveDuplicatesStrategy(object):
@@ -198,7 +238,8 @@ MIB_THRESHOLD = 1024 * 1024
 DEFAULT_MATCHER = SignatureMatcher()
 MATCHERS = [
     DEFAULT_MATCHER,
-    NameMatcher()
+    NameMatcher(),
+    FuzzyNameMatcher()
 ]
 
 DEFAULT_STRATEGY = DoNotRemoveDuplicatesStrategy()
