@@ -118,6 +118,12 @@ class SignatureMatcher(object):
     def prune(d):
         return { k : paths for k, paths in d.iteritems() if len(paths) > 1 }
 
+class NameMatcher(object):
+    NAME = "name"
+
+    def find_duplicates(self, root_dir, dry_run, debug, show_progress):
+        return {}
+
 ##################################################
 
 class DoNotRemoveDuplicatesStrategy(object):
@@ -175,7 +181,8 @@ MIB_THRESHOLD = 1024 * 1024
 
 DEFAULT_MATCHER = SignatureMatcher()
 MATCHERS = [
-    DEFAULT_MATCHER
+    DEFAULT_MATCHER,
+    NameMatcher()
 ]
 
 DEFAULT_STRATEGY = DoNotRemoveDuplicatesStrategy()
