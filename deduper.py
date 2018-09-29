@@ -12,6 +12,114 @@ import sys
 
 ##################################################
 
+class SignatureMatcher(object):
+    NAME = "signature"
+
+    def find_duplicates(self, root_dir, dry_run, debug, show_progress):
+        # Group by size
+        size_map = self.scan(root_dir, show_progress=show_progress)
+        self.dump(root_dir, size_map)
+
+        logging.info("Size scan found {} candidate files".format(self.compute_file_count(size_map)))
+
+        # Group by partial signature
+        sig_map0 = self.compute_signatures(size_map, partial=True, show_progress=show_progress)
+        self.dump(root_dir, sig_map0)
+
+        logging.info("Signature scan found {} candidate files".format(self.compute_file_count(sig_map0)))
+
+        # Group by full signature
+        sig_map1 = self.compute_signatures(sig_map0, partial=False, show_progress=show_progress)
+        self.dump(root_dir, sig_map1)
+
+        duplicate_file_count, duplicate_byte_count = self.compute_wastage(sig_map1, debug=debug)
+        logging.info("Found {} duplicate files occupying {}".format(
+            duplicate_file_count,
+            pretty_byte_count(duplicate_byte_count)))
+
+        return sig_map1
+
+    @staticmethod
+    def scan(start_dir, show_progress):
+        with Progress(show_progress) as p:
+            result = {}
+            for root_dir, _, file_names in os.walk(start_dir):
+                for file_name in file_names:
+                    p.step()
+                    path = os.path.join(root_dir, file_name)
+                    file_size = os.stat(path).st_size
+                    if file_size not in result:
+                        result[file_size] = []
+                    result[file_size].append(path)
+
+        return SignatureMatcher.prune(result)
+
+    @staticmethod
+    def compute_signatures(d, partial, show_progress):
+        with Progress(show_progress) as p:
+            result = {}
+            for _, paths in d.iteritems():
+                for path in paths:
+                    p.step()
+                    sig = SignatureMatcher.compute_signature(path, partial)
+                    if sig not in result:
+                        result[sig] = []
+                    result[sig].append(path)
+
+        return SignatureMatcher.prune(result)
+
+    @staticmethod
+    def compute_signature(path, partial=False):
+        file_size = os.stat(path).st_size
+        if partial:
+            block_count = 1
+        else:
+            block_count = (file_size / BLOCK_SIZE) + 1 if (file_size % BLOCK_SIZE) > 0 else 0
+
+        m = hashlib.sha1()
+        with open(path, "rb") as f:
+            for i in range(0, block_count):
+                m.update(f.read(BLOCK_SIZE))
+
+        return "{}:{}".format(file_size, m.hexdigest())
+
+    @staticmethod
+    def dump(root_dir, d):
+        # Potentially expensive logging
+        if debug_logging():
+            entries = ["{}: {}".format(key, pretty_list(map(lambda p: os.path.relpath(p, root_dir), paths))) for key, paths in d.iteritems()]
+            logging.debug("Files: {}".format(pretty_list(entries)))
+
+    @staticmethod
+    def compute_file_count(d):
+        file_count = sum([len(paths) for _, paths in d.iteritems()])
+        return file_count
+
+    @staticmethod
+    def compute_wastage(d, debug):
+        duplicate_file_count = sum([len(paths) - 1 for _, paths in d.iteritems()])
+        duplicate_byte_count = sum([os.stat(paths[0]).st_size * (len(paths) - 1) for _, paths in d.iteritems()])
+
+        if debug:
+            is_valid = True
+            for _, paths in d.iteritems():
+                p0 = paths[0]
+                for p in paths:
+                    if not compare_files(p0, p):
+                        is_valid = False
+                        logging.info("File comparison failed: {} vs {}".format(p0, p))
+
+            if not is_valid:
+                raise RuntimeError("Diagnostics failed")
+
+        return duplicate_file_count, duplicate_byte_count
+
+    @staticmethod
+    def prune(d):
+        return { k : paths for k, paths in d.iteritems() if len(paths) > 1 }
+
+##################################################
+
 class DoNotRemoveDuplicatesStrategy(object):
     NAME = "nop"
 
@@ -106,12 +214,6 @@ def pretty_byte_count(n):
     else:
         return "{} bytes".format(n)
 
-def dump(root_dir, d):
-    # Potentially expensive logging
-    if debug_logging():
-        entries = ["{}: {}".format(key, pretty_list(map(lambda p: os.path.relpath(p, root_dir), paths))) for key, paths in d.iteritems()]
-        logging.debug("Files: {}".format(pretty_list(entries)))
-
 def compare_files(p0, p1):
     with open(p0, "rb") as f:
         d0 = f.read()
@@ -120,55 +222,12 @@ def compare_files(p0, p1):
 
     return d0 == d1
 
-def compute_file_count(d):
-    file_count = sum([len(paths) for _, paths in d.iteritems()])
-    return file_count
-
-def compute_wastage(d, debug):
-    duplicate_file_count = sum([len(paths) - 1 for _, paths in d.iteritems()])
-    duplicate_byte_count = sum([os.stat(paths[0]).st_size * (len(paths) - 1) for _, paths in d.iteritems()])
-
-    if debug:
-        is_valid = True
-        for _, paths in d.iteritems():
-            p0 = paths[0]
-            for p in paths:
-                if not compare_files(p0, p):
-                    is_valid = False
-                    logging.info("File comparison failed: {} vs {}".format(p0, p))
-
-        if not is_valid:
-            raise RuntimeError("Diagnostics failed")
-
-    return duplicate_file_count, duplicate_byte_count
-
-def prune(d):
-    return { k : paths for k, paths in d.iteritems() if len(paths) > 1 }
-
 ##################################################
 
-def find_duplicates(root_dir, strategy, dry_run, debug, show_progress):
-    size_map = scan(root_dir, show_progress=show_progress)
-    dump(root_dir, size_map)
-
-    logging.info("Size scan found {} candidate files".format(compute_file_count(size_map)))
-
-    sig_map0 = compute_signatures(size_map, partial=True, show_progress=show_progress)
-    dump(root_dir, sig_map0)
-
-    logging.info("Signature scan found {} candidate files".format(compute_file_count(sig_map0)))
-
-    sig_map1 = compute_signatures(sig_map0, partial=False, show_progress=show_progress)
-    dump(root_dir, sig_map1)
-
-    duplicate_file_count, duplicate_byte_count = compute_wastage(sig_map1, debug=debug)
-    logging.info("Found {} duplicate files occupying {}".format(
-        duplicate_file_count,
-        pretty_byte_count(duplicate_byte_count)))
-
+def remove_duplicates(strategy, duplicate_map, dry_run, debug):
     bytes_freed = 0
     file_count = 0
-    for _, paths in sig_map1.iteritems():
+    for _, paths in duplicate_map.iteritems():
         files_to_keep, files_to_remove = strategy.apply(paths)
 
         # Potentially expensive logging
@@ -189,47 +248,6 @@ def find_duplicates(root_dir, strategy, dry_run, debug, show_progress):
         strategy.NAME,
         file_count,
         pretty_byte_count(bytes_freed)))
-
-def scan(start_dir, show_progress=False):
-    with Progress(show_progress) as p:
-        result = {}
-        for root_dir, _, file_names in os.walk(start_dir):
-            for file_name in file_names:
-                p.step()
-                path = os.path.join(root_dir, file_name)
-                file_size = os.stat(path).st_size
-                if file_size not in result:
-                    result[file_size] = []
-                result[file_size].append(path)
-
-    return prune(result)
-
-def compute_signatures(d, partial=False, show_progress=False):
-    with Progress(show_progress) as p:
-        result = {}
-        for _, paths in d.iteritems():
-            for path in paths:
-                p.step()
-                sig = compute_signature(path, partial)
-                if sig not in result:
-                    result[sig] = []
-                result[sig].append(path)
-
-    return prune(result)
-
-def compute_signature(path, partial=False):
-    file_size = os.stat(path).st_size
-    if partial:
-        block_count = 1
-    else:
-        block_count = (file_size / BLOCK_SIZE) + 1 if (file_size % BLOCK_SIZE) > 0 else 0
-
-    m = hashlib.sha1()
-    with open(path, "rb") as f:
-        for i in range(0, block_count):
-            m.update(f.read(BLOCK_SIZE))
-
-    return "{}:{}".format(file_size, m.hexdigest())
 
 ##################################################
 
@@ -319,16 +337,27 @@ def main(argv=None):
     for k, v in sorted(vars(args).iteritems()):
         logging.info("Argument: {}={}".format(k, v))
 
+    matcher = SignatureMatcher()
+
     start_time = datetime.datetime.now()
-    logging.info("Scan started at {}".format(start_time))
-    find_duplicates(
+    logging.info("Deduplication started at {}".format(start_time))
+
+    logging.info("Finding duplicates using \"{}\" matcher".format(matcher.NAME))
+    duplicate_map = matcher.find_duplicates(
         args.root_dir,
-        args.strategy,
         dry_run=args.dry_run,
         debug=args.debug,
         show_progress=args.progress)
+
+    logging.info("Removing duplicates")
+    remove_duplicates(
+        args.strategy,
+        duplicate_map,
+        dry_run=args.dry_run,
+        debug=args.debug)
+
     end_time = datetime.datetime.now()
-    logging.info("Scan finished at {}, elapsed time: {}".format(end_time, end_time - start_time))
+    logging.info("Deduplication finished at {}, elapsed time: {}".format(end_time, end_time - start_time))
 
 ##################################################
 
