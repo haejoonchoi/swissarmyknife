@@ -13,7 +13,7 @@ import sys
 ##################################################
 
 class SignatureMatcher(object):
-    NAME = "signature"
+    NAME = "sig"
 
     def find_duplicates(self, root_dir, dry_run, debug, show_progress):
         # Group by size
@@ -173,6 +173,11 @@ BLOCK_SIZE = 1024
 GIB_THRESHOLD = 1024 * 1024 * 1024
 MIB_THRESHOLD = 1024 * 1024
 
+DEFAULT_MATCHER = SignatureMatcher()
+MATCHERS = [
+    DEFAULT_MATCHER
+]
+
 DEFAULT_STRATEGY = DoNotRemoveDuplicatesStrategy()
 STRATEGIES = [
     DEFAULT_STRATEGY,
@@ -251,6 +256,12 @@ def remove_duplicates(strategy, duplicate_map, dry_run, debug):
 
 ##################################################
 
+def get_matcher(name):
+    matcher = next((m for m in MATCHERS if m.NAME == name), None)
+    if matcher is None:
+        raise argparse.ArgumentTypeError("Matcher must be one of ({})".format(", ".join(sorted(map(lambda m: "\"{}\"".format(m.NAME), MATCHERS)))))
+    return matcher
+
 def get_strategy(name):
     strategy = next((s for s in STRATEGIES if s.NAME == name), None)
     if strategy is None:
@@ -289,6 +300,12 @@ def main(argv=None):
         metavar="ROOTDIR",
         type=os.path.abspath,
         help="start directory for scan")
+    parser.add_argument(
+        "--match",
+        dest="matcher",
+        type=get_matcher,
+        default=DEFAULT_MATCHER,
+        help="matcher used to compare files")
     parser.add_argument(
         "--strategy",
         dest="strategy",
@@ -337,13 +354,11 @@ def main(argv=None):
     for k, v in sorted(vars(args).iteritems()):
         logging.info("Argument: {}={}".format(k, v))
 
-    matcher = SignatureMatcher()
-
     start_time = datetime.datetime.now()
     logging.info("Deduplication started at {}".format(start_time))
 
-    logging.info("Finding duplicates using \"{}\" matcher".format(matcher.NAME))
-    duplicate_map = matcher.find_duplicates(
+    logging.info("Finding duplicates using \"{}\" matcher".format(args.matcher.NAME))
+    duplicate_map = args.matcher.find_duplicates(
         args.root_dir,
         dry_run=args.dry_run,
         debug=args.debug,
