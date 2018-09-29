@@ -410,7 +410,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     if not args.force and not is_safe_dir(args.root_dir):
-        sys.stderr.write("Safety check failed: do you really want to run this command on this directory?\n")
+        sys.stderr.write("Safety check failed: If you really want to run this command in this directory use --force?\n")
         sys.exit(1)
 
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO, format="%(levelname)s:%(message)s")
