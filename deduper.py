@@ -10,12 +10,18 @@ import logging
 import os
 import sys
 
+
+##################################################
+
+def prune(d):
+    return { k : paths for k, paths in d.iteritems() if len(paths) > 1 }
+
 ##################################################
 
 class SignatureMatcher(object):
     NAME = "sig"
 
-    def find_duplicates(self, root_dir, dry_run, debug, show_progress):
+    def find_duplicates(self, root_dir, show_progress):
         # Group by size
         size_map = self.scan(root_dir, show_progress=show_progress)
         self.dump(root_dir, size_map)
@@ -39,6 +45,8 @@ class SignatureMatcher(object):
 
         return sig_map1
 
+    def __repr__(self): return self.NAME
+
     @staticmethod
     def scan(start_dir, show_progress):
         with Progress(show_progress) as p:
@@ -52,7 +60,7 @@ class SignatureMatcher(object):
                         result[file_size] = []
                     result[file_size].append(path)
 
-        return SignatureMatcher.prune(result)
+        return prune(result)
 
     @staticmethod
     def compute_signatures(d, partial, show_progress):
@@ -66,7 +74,7 @@ class SignatureMatcher(object):
                         result[sig] = []
                     result[sig].append(path)
 
-        return SignatureMatcher.prune(result)
+        return prune(result)
 
     @staticmethod
     def compute_signature(path, partial=False):
@@ -114,15 +122,23 @@ class SignatureMatcher(object):
 
         return duplicate_file_count, duplicate_byte_count
 
-    @staticmethod
-    def prune(d):
-        return { k : paths for k, paths in d.iteritems() if len(paths) > 1 }
-
 class NameMatcher(object):
     NAME = "name"
 
-    def find_duplicates(self, root_dir, dry_run, debug, show_progress):
-        return {}
+    def find_duplicates(self, root_dir, show_progress):
+        with Progress(show_progress) as p:
+            result = {}
+            for base_dir, _, file_names in os.walk(root_dir):
+                for file_name in file_names:
+                    p.step()
+                    path = os.path.join(base_dir, file_name)
+                    if file_name not in result:
+                        result[file_name] = []
+                    result[file_name].append(path)
+
+        return prune(result)
+
+    def __repr__(self): return self.NAME
 
 ##################################################
 
@@ -365,11 +381,7 @@ def main(argv=None):
     logging.info("Deduplication started at {}".format(start_time))
 
     logging.info("Finding duplicates using \"{}\" matcher".format(args.matcher.NAME))
-    duplicate_map = args.matcher.find_duplicates(
-        args.root_dir,
-        dry_run=args.dry_run,
-        debug=args.debug,
-        show_progress=args.progress)
+    duplicate_map = args.matcher.find_duplicates(args.root_dir, show_progress=args.progress)
 
     logging.info("Removing duplicates")
     remove_duplicates(
