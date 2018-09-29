@@ -7,9 +7,10 @@ Based on and inspired by [`find_duplicates.py`][find-duplicates]
 ## Usage
 
 ```
-usage: deduper.py [-h] [--strategy STRATEGY] [--dry-run | --no-dry-run]
-                  [--verbose | --no-verbose] [--debug | --no-debug]
-                  [--force | --no-force] [--progress | --no-progress]
+usage: deduper.py [-h] [--match MATCHER] [--strategy STRATEGY]
+                  [--dry-run | --no-dry-run] [--verbose | --no-verbose]
+                  [--debug | --no-debug] [--force | --no-force]
+                  [--progress | --no-progress]
                   ROOTDIR
 
 A reasonably useful file deduplicator
@@ -19,6 +20,7 @@ positional arguments:
 
 optional arguments:
   -h, --help           show this help message and exit
+  --match MATCHER      matcher used to compare files
   --strategy STRATEGY  deduplication strategy to employ
   --dry-run            perform scan but do not delete files
   --no-dry-run         perform scan and delete files
