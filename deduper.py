@@ -22,7 +22,7 @@ def prune(d):
 class SignatureMatcher(object):
     NAME = "sig"
 
-    def find_duplicates(self, root_dir, show_progress):
+    def find_duplicates(self, root_dir, debug, show_progress):
         # Group by size
         size_map = self.scan(root_dir, show_progress=show_progress)
         self.dump(root_dir, size_map)
@@ -126,7 +126,7 @@ class SignatureMatcher(object):
 class NameMatcher(object):
     NAME = "name"
 
-    def find_duplicates(self, root_dir, show_progress):
+    def find_duplicates(self, root_dir, debug, show_progress):
         with Progress(show_progress) as p:
             result = {}
             for base_dir, _, file_names in os.walk(root_dir):
@@ -144,7 +144,7 @@ class NameMatcher(object):
 class FuzzyNameMatcher(object):
     NAME = "fuzzy"
 
-    def find_duplicates(self, root_dir, show_progress):
+    def find_duplicates(self, root_dir, debug, show_progress):
         with Progress(show_progress) as p:
             result = {}
             for base_dir, _, file_names in os.walk(root_dir):
@@ -422,7 +422,10 @@ def main(argv=None):
     logging.info("Deduplication started at {}".format(start_time))
 
     logging.info("Finding duplicates using \"{}\" matcher".format(args.matcher.NAME))
-    duplicate_map = args.matcher.find_duplicates(args.root_dir, show_progress=args.progress)
+    duplicate_map = args.matcher.find_duplicates(
+        args.root_dir,
+        debug=args.debug,
+        show_progress=args.progress)
 
     logging.info("Removing duplicates")
     remove_duplicates(
