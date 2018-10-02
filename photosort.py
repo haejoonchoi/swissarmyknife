@@ -4,6 +4,8 @@ import exifread
 import os
 import sys
 
+DATE_TIME_KEY = "EXIF DateTimeDigitized"
+
 EXTS = map(lambda s: s.lower(), [
     ".jpg"
 ])
@@ -11,10 +13,15 @@ EXTS = map(lambda s: s.lower(), [
 def get_date(path):
     with open(path, "rb") as f:
         tags = exifread.process_file(f)
-        return datetime.datetime.strptime(str(tags["EXIF DateTimeDigitized"]), "%Y:%m:%d %H:%M:%S")
+        value = tags.get(DATE_TIME_KEY, None)
+        if value is None:
+            return None
+        return datetime.datetime.strptime(str(value), "%Y:%m:%d %H:%M:%S")
 
 def rename(source_path):
     d = get_date(source_path)
+    if d is None:
+        return
 
     source_dir = os.path.dirname(source_path)
     source_file_name = os.path.basename(source_path)
