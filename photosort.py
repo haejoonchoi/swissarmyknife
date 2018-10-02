@@ -4,6 +4,10 @@ import exifread
 import os
 import sys
 
+EXTS = map(lambda s: s.lower(), [
+    ".jpg"
+])
+
 def rename(source_path):
     with open(source_path, "rb") as f:
         tags = exifread.process_file(f)
@@ -25,7 +29,7 @@ def rename(source_path):
 def scan(start_dir):
     for file_name in os.listdir(start_dir):
         _, ext = os.path.splitext(file_name)
-        if ext == ".jpg":
+        if ext.lower() in EXTS:
             source_path = os.path.join(start_dir, file_name)
             rename(source_path)
 
