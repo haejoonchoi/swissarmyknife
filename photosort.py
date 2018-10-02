@@ -1,6 +1,8 @@
+import argparse
 import datetime
 import exifread
 import os
+import sys
 
 def rename(source_path):
     with open(source_path, "rb") as f:
@@ -27,4 +29,14 @@ def scan(start_dir):
             source_path = os.path.join(start_dir, file_name)
             rename(source_path)
 
-scan("/home/rcook/Downloads")
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
+
+    parser = argparse.ArgumentParser(description="Create sorted directory structure for photos based on metadata")
+    parser.add_argument("start_dir", metavar="STARTDIR", type=os.path.abspath)
+    args = parser.parse_args(argv)
+    scan(args.start_dir)
+
+if __name__ == "__main__":
+    main()
