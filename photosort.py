@@ -8,10 +8,13 @@ EXTS = map(lambda s: s.lower(), [
     ".jpg"
 ])
 
-def rename(source_path):
-    with open(source_path, "rb") as f:
+def get_date(path):
+    with open(path, "rb") as f:
         tags = exifread.process_file(f)
-        d = datetime.datetime.strptime(str(tags["EXIF DateTimeDigitized"]), "%Y:%m:%d %H:%M:%S")
+        return datetime.datetime.strptime(str(tags["EXIF DateTimeDigitized"]), "%Y:%m:%d %H:%M:%S")
+
+def rename(source_path):
+    d = get_date(source_path)
 
     source_dir = os.path.dirname(source_path)
     source_file_name = os.path.basename(source_path)
