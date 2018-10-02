@@ -4,7 +4,7 @@ import exifread
 import os
 import sys
 
-DATE_TIME_KEY = "EXIF DateTimeDigitized"
+DATE_TIME_KEY = "EXIF DateTimeOriginal"
 
 EXTS = map(lambda s: s.lower(), [
     ".jpg"
