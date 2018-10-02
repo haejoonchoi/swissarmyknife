@@ -29,7 +29,11 @@ def rename(input_path, output_dir):
     target_dir = os.path.join(output_dir, target_subdir)
     target_path = os.path.join(target_dir, target_file_name)
 
+    if not os.path.isdir(target_dir):
+        os.makedirs(target_dir)
+
     print("{} -> {}".format(input_path, target_path))
+    os.rename(input_path, target_path)
 
 def rename_all(input_dir, output_dir):
     for file_name in os.listdir(input_dir):
