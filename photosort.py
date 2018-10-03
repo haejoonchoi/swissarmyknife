@@ -2,6 +2,7 @@ import argparse
 import datetime
 import exifread
 import os
+import shutil
 import sys
 
 DATE_TIME_KEY = "EXIF DateTimeOriginal"
@@ -18,11 +19,11 @@ def get_date(path):
             return None
         return datetime.datetime.strptime(str(value), "%Y:%m:%d %H:%M:%S")
 
-def rename(input_path, output_dir):
+def copy_with_date(input_path, output_dir):
     input_file_name = os.path.basename(input_path)
     d = get_date(input_path)
     if d is None:
-        return
+        return False
 
     target_file_name = "{0:04d}{1:02d}{2:02d}-{3}".format(d.year, d.month, d.day, input_file_name)
     target_subdir = os.path.join("{0:04d}".format(d.year), "{0:04d}-{1:02d}".format(d.year, d.month))
@@ -33,13 +34,20 @@ def rename(input_path, output_dir):
         os.makedirs(target_dir)
 
     print("{} -> {}".format(input_path, target_path))
-    os.rename(input_path, target_path)
+    shutil.copy(input_path, target_path)
+    return True
 
 def rename_all(input_dir, output_dir):
+    other_dir = os.path.join(output_dir, "ZZ_Other")
+    if not os.path.isdir(other_dir):
+        os.makedirs(other_dir)
     for file_name in os.listdir(input_dir):
+        full_path = os.path.join(input_dir, file_name)
         _, ext = os.path.splitext(file_name)
-        if ext.lower() in EXTS:
-            rename(os.path.join(input_dir, file_name), output_dir)
+        if ext.lower() in EXTS and copy_with_date(full_path, output_dir):
+            print(".")
+        else:
+            shutil.copy(full_path, os.path.join(other_dir, file_name))
 
 def main(argv=None):
     if argv is None:
