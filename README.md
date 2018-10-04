@@ -17,7 +17,7 @@ Scripts available:
 * [Photosort](#photosort)
 * [Treesize](#treesize)
 
-## Deduper
+## Deduper ([code](deduper))
 
 This is a reasonably useful file deduplicator, based on and inspired by [`find_duplicates.py`][find-duplicates].
 
@@ -59,7 +59,7 @@ https://github.com/rcook/pyfileutils
 ./deduper --strategy keep-first --dry-run --verbose .
 ```
 
-## Photosort
+## Photosort ([code](photosort))
 
 This script walks a directory tree containing `.jpg` image files and arranges them into a year-month hierarchy.
 
@@ -88,7 +88,7 @@ https://github.com/rcook/pyfileutils
 ./photosort input-dir output-dir
 ```
 
-## Treesize
+## Treesize ([code](treesize))
 
 This scripts walks a directory tree and outputs the total file count and total file size in bytes. This is useful because the macOS's version of `du` does not support `--apparent-size` unlike GNU's.
 
