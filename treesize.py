@@ -45,13 +45,20 @@ def main(argv=None):
         default=True,
         help="recurse into directory",
         inverse_help="do not recurse into directory")
+    add_switch_with_inverse(
+        parser,
+        "progress",
+        default=True,
+        help="show files as they are processed",
+        inverse_help="do not show files as they are processed")
 
     args = parser.parse_args(argv)
 
     file_count = 0
     total_bytes = 0
     for p in scan(args.start_dir, recursive=args.recursive):
-        print(p)
+        if args.progress:
+            print(p)
         file_count += 1
         file_size = os.stat(p).st_size
         total_bytes += file_size

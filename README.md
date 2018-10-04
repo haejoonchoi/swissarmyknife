@@ -106,6 +106,8 @@ optional arguments:
   -h, --help      show this help message and exit
   --recursive     recurse into directory
   --no-recursive  do not recurse into directory
+  --progress      show files as they are processed
+  --no-progress   do not show files as they are processed
 
 https://github.com/rcook/pyfileutils
 ```
