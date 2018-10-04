@@ -332,7 +332,7 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser(
         description="A reasonably useful file deduplicator",
-        epilog="https://github.com/rcook/pyfileutils")
+        epilog=GITHUB_URL)
     parser.add_argument(
         "start_dir",
         metavar="STARTDIR",

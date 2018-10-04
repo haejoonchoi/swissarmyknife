@@ -23,7 +23,7 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser(
         description="Report total file count and file bytes for directory tree",
-        epilog="https://github.com/rcook/pyfileutils")
+        epilog=GITHUB_URL)
     parser.add_argument("start_dir", metavar="STARTDIR", type=os.path.abspath)
     add_switch_with_inverse(
         parser,

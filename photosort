@@ -10,6 +10,8 @@ import os
 import shutil
 import sys
 
+from shared import *
+
 DATE_TIME_KEY = "EXIF DateTimeOriginal"
 
 EXTS = map(lambda s: s.lower(), [
@@ -60,7 +62,7 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser(
         description="Sort JPEGs into year/month directory structure",
-        epilog="https://github.com/rcook/pyfileutils")
+        epilog=GITHUB_URL)
     parser.add_argument("input_dir", metavar="INPUTDIR", type=os.path.abspath)
     parser.add_argument("output_dir", metavar="OUTPUTDIR", type=os.path.abspath)
     args = parser.parse_args(argv)

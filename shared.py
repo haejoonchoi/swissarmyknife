@@ -2,6 +2,8 @@
 # Shared functions
 # https://github.com/rcook/pyfileutils
 
+GITHUB_URL = "https://github.com/rcook/pyfileutils"
+
 GIB_THRESHOLD = 1024 * 1024 * 1024
 MIB_THRESHOLD = 1024 * 1024
 
