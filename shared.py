@@ -7,8 +7,6 @@ import os
 
 GITHUB_URL = "https://github.com/rcook/pyfileutils"
 
-BLOCK_SIZE = 1024
-
 GIB_THRESHOLD = 1024 * 1024 * 1024
 MIB_THRESHOLD = 1024 * 1024
 

@@ -71,7 +71,7 @@ class SignatureMatcher(object):
             for _, paths in d.iteritems():
                 for path in paths:
                     p.step()
-                    sig = compute_sha1(path, partial=partial, include_file_size=True)
+                    sig = compute_sha1(path, partial=partial, include_file_size=True, block_size=1024)
                     if sig not in result:
                         result[sig] = []
                     result[sig].append(path)
