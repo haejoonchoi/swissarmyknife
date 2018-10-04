@@ -8,7 +8,7 @@ An improved version of `sha1sum` that will recurse a directory structure
 ## Usage
 
 ```
-usage: sha1sumex [-h] {generate,verify} ...
+usage: sha1sumex [-h] [--partial | --no-partial] {generate,verify} ...
 
 Generate/verify SHA1 checksum file
 
@@ -19,6 +19,8 @@ positional arguments:
 
 optional arguments:
   -h, --help         show this help message and exit
+  --partial          compute partial (short) signatures
+  --no-partial       compute full (long) signatures
 
 https://github.com/rcook/pyfileutils
 ```

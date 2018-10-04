@@ -17,7 +17,8 @@ def run_generate(args):
             for file_name in file_names:
                 full_path = os.path.join(base_dir, file_name)
                 rel_path = os.path.relpath(full_path, start_dir)
-                f.write("{} {}\n".format(compute_sha1(full_path, include_file_size=False), rel_path))
+                sig = compute_sha1(full_path, partial=args.partial, include_file_size=False)
+                f.write("{} {}\n".format(sig, rel_path))
 
 def run_verify(args):
     list_path = os.path.abspath(args.list_file)
@@ -28,7 +29,7 @@ def run_verify(args):
         for _, line in enumerate(f):
             expected_sig, f = line.strip().split(" ", 1)
             full_path = os.path.join(start_dir, f)
-            sig = compute_sha1(full_path, include_file_size=False)
+            sig = compute_sha1(full_path, partial=args.partial, include_file_size=False)
             if sig == expected_sig:
                 match_count += 1
             else:
@@ -47,6 +48,14 @@ def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Generate/verify SHA1 checksum file",
         epilog=GITHUB_URL)
+
+    add_switch_with_inverse(
+        parser,
+        "partial",
+        default=False,
+        help="compute partial (short) signatures",
+        inverse_help="compute full (long) signatures")
+
     subparsers = parser.add_subparsers()
 
     generate_parser = subparsers.add_parser("generate", help="generate checksum file")
