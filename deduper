@@ -71,27 +71,12 @@ class SignatureMatcher(object):
             for _, paths in d.iteritems():
                 for path in paths:
                     p.step()
-                    sig = SignatureMatcher.compute_signature(path, partial)
+                    sig = compute_sha1(path, partial=partial, include_file_size=True)
                     if sig not in result:
                         result[sig] = []
                     result[sig].append(path)
 
         return prune(result)
-
-    @staticmethod
-    def compute_signature(path, partial=False):
-        file_size = os.stat(path).st_size
-        if partial:
-            block_count = 1
-        else:
-            block_count = (file_size / BLOCK_SIZE) + 1 if (file_size % BLOCK_SIZE) > 0 else 0
-
-        m = hashlib.sha1()
-        with open(path, "rb") as f:
-            for i in range(0, block_count):
-                m.update(f.read(BLOCK_SIZE))
-
-        return "{}:{}".format(file_size, m.hexdigest())
 
     @staticmethod
     def dump(start_dir, d):
