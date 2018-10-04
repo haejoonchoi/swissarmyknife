@@ -4,6 +4,13 @@ These scripts are designed to perform file and backup housekeeping operations wi
 
 Unless specifically called out, all these scripts should work on a standard Python 2.7.x installation with no additional package requirements. Furthermore, the individual scripts are more or less self-contained, even if it means that there is copy-and-pasted code between them. This is an intentional design choice, though I might choose to revisit this in the future.
 
+I have deliberately chosen to write these scripts in Python (2.7.x, specifically) for the following reasons:
+
+* I like Python
+* Python 2.7.x is almost universally available on all platforms I care about (Linux, macOS, Windows)
+* Python is reasonably portable
+* Python 2.7.x is installed by default on Linux and macOS
+
 ## Deduper
 
 This is a reasonably useful file deduplicator, based on and inspired by [`find_duplicates.py`][find-duplicates].
