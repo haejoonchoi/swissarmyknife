@@ -46,7 +46,7 @@ def main(argv=None):
         argv = sys.argv[1:]
 
     parser = argparse.ArgumentParser(
-        description="Generate/verify SHA1 checksum file",
+        description="An improved sha1sum",
         epilog=GITHUB_URL)
 
     add_switch_with_inverse(
