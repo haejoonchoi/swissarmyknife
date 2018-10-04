@@ -53,7 +53,7 @@ def main(argv=None):
             file_size = os.stat(p).st_size
             total_bytes += file_size
 
-    print("{} files, {} bytes ({}), {} symlinks".format(
+    print("{:,} files, {:,} bytes ({}), {:,} symlinks".format(
         file_count,
         total_bytes,
         pretty_byte_count(total_bytes),
