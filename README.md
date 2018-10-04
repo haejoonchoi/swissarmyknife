@@ -9,7 +9,7 @@ I have deliberately chosen to write these scripts in Python (2.7.x, specifically
 * I like Python
 * Python 2.7.x is almost universally available on all platforms I care about (Linux, macOS, Windows)
 * Python is reasonably portable
-* Python 2.7.x is installed by default on Linux and macOS
+* Python 2.7.x is usually installed by default on Linux and macOS
 
 Scripts available:
 
