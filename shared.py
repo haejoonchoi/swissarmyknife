@@ -72,11 +72,11 @@ def pretty_byte_count(n):
     >>> pretty_byte_count(186129123)
     '177.5 MiB'
     >>> pretty_byte_count(186129)
-    '181.8 kiB'
+    '181.8 KiB'
     >>> pretty_byte_count(5000)
-    '4.9 kiB'
+    '4.9 KiB'
     >>> pretty_byte_count(1024)
-    '1.0 kiB'
+    '1.0 KiB'
     >>> pretty_byte_count(1000)
     '1,000 bytes'
     >>> pretty_byte_count(512)
@@ -87,6 +87,6 @@ def pretty_byte_count(n):
     elif n >= MIB_THRESHOLD:
         return "{:,.1f} MiB".format(float(n) / MIB_THRESHOLD)
     elif n >= KIB_THRESHOLD:
-        return "{:,.1f} kiB".format(float(n) / KIB_THRESHOLD)
+        return "{:,.1f} KiB".format(float(n) / KIB_THRESHOLD)
     else:
         return "{:,} bytes".format(n)
