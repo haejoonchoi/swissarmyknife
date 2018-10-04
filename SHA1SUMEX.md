@@ -8,9 +8,10 @@ An improved version of `sha1sum` that will recurse a directory structure
 ## Usage
 
 ```
-usage: sha1sumex [-h] [--partial | --no-partial] {generate,verify} ...
+usage: sha1sumex [-h] [--partial | --no-partial] [--progress | --no-progress]
+                 {generate,verify} ...
 
-Generate/verify SHA1 checksum file
+An improved sha1sum
 
 positional arguments:
   {generate,verify}
@@ -21,6 +22,8 @@ optional arguments:
   -h, --help         show this help message and exit
   --partial          compute partial (short) signatures
   --no-partial       compute full (long) signatures
+  --progress         show files as they are processed
+  --no-progress      do not show files as they are processed
 
 https://github.com/rcook/swissarmyknife
 ```

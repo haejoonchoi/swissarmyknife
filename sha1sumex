@@ -20,6 +20,8 @@ def run_generate(args):
                 rel_path = os.path.relpath(full_path, start_dir)
                 sig = compute_sha1(full_path, partial=args.partial, include_file_size=False)
                 f.write("{} {}\n".format(sig, rel_path))
+                if args.progress:
+                    print("{} {}".format(sig, rel_path))
 
 def run_verify(args):
     list_path = os.path.abspath(args.list_file)
@@ -30,6 +32,9 @@ def run_verify(args):
         for _, line in enumerate(f):
             expected_sig, f = line.strip().split(" ", 1)
             full_path = os.path.join(start_dir, f)
+            if args.progress:
+                print(full_path)
+
             sig = compute_sha1(full_path, partial=args.partial, include_file_size=False)
             if sig == expected_sig:
                 match_count += 1
@@ -56,6 +61,12 @@ def main(argv=None):
         default=False,
         help="compute partial (short) signatures",
         inverse_help="compute full (long) signatures")
+    add_switch_with_inverse(
+        parser,
+        "progress",
+        default=True,
+        help="show files as they are processed",
+        inverse_help="do not show files as they are processed")
 
     subparsers = parser.add_subparsers()
 
