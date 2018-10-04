@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# Shared functions
+# https://github.com/rcook/pyfileutils
+
 GIB_THRESHOLD = 1024 * 1024 * 1024
 MIB_THRESHOLD = 1024 * 1024
 
