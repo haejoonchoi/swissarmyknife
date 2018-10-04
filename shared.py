@@ -65,6 +65,8 @@ def add_switch_with_inverse(parser, name, default, help=None, inverse_help=None)
 
 def pretty_byte_count(n):
     """
+    >>> pretty_byte_count(186129123987123)
+    '173,346.3 GiB'
     >>> pretty_byte_count(186129123987)
     '173.3 GiB'
     >>> pretty_byte_count(186129123)
@@ -76,15 +78,15 @@ def pretty_byte_count(n):
     >>> pretty_byte_count(1024)
     '1.0 kiB'
     >>> pretty_byte_count(1000)
-    '1000 bytes'
+    '1,000 bytes'
     >>> pretty_byte_count(512)
     '512 bytes'
     """
     if n >= GIB_THRESHOLD:
-        return "{0:0.1f} GiB".format(float(n) / GIB_THRESHOLD)
+        return "{:,.1f} GiB".format(float(n) / GIB_THRESHOLD)
     elif n >= MIB_THRESHOLD:
-        return "{0:0.1f} MiB".format(float(n) / MIB_THRESHOLD)
+        return "{:,.1f} MiB".format(float(n) / MIB_THRESHOLD)
     elif n >= KIB_THRESHOLD:
-        return "{0:0.1f} kiB".format(float(n) / KIB_THRESHOLD)
+        return "{:,.1f} kiB".format(float(n) / KIB_THRESHOLD)
     else:
-        return "{} bytes".format(n)
+        return "{:,} bytes".format(n)
