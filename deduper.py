@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Deduper
 # A reasonably useful file deduplicator
-# https://github.com/rcook/deduper
+# https://github.com/rcook/pyfileutils
 
 import argparse
 import datetime
@@ -357,7 +357,7 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser(
         description="A reasonably useful file deduplicator",
-        epilog="https://github.com/rcook/deduper")
+        epilog="https://github.com/rcook/pyfileutils")
     parser.add_argument(
         "root_dir",
         metavar="ROOTDIR",

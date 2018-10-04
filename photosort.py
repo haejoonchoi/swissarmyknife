@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# Photosort
+# Sort JPEGs into year/month directory structure
+# https://github.com/rcook/pyfileutils
+
 import argparse
 import datetime
 import exifread
@@ -53,7 +58,9 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
 
-    parser = argparse.ArgumentParser(description="Create sorted directory structure for photos based on metadata")
+    parser = argparse.ArgumentParser(
+        description="Sort JPEGs into year/month directory structure",
+        epilog="https://github.com/rcook/pyfileutils")
     parser.add_argument("input_dir", metavar="INPUTDIR", type=os.path.abspath)
     parser.add_argument("output_dir", metavar="OUTPUTDIR", type=os.path.abspath)
     args = parser.parse_args(argv)
