@@ -55,15 +55,19 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     file_count = 0
+    symlink_count = 0
     total_bytes = 0
     for p in scan(args.start_dir, recursive=args.recursive):
         if args.progress:
             print(p)
-        file_count += 1
-        file_size = os.stat(p).st_size
-        total_bytes += file_size
+        if os.path.islink(p):
+            symlink_count += 1
+        else:
+            file_count += 1
+            file_size = os.stat(p).st_size
+            total_bytes += file_size
 
-    print("{} files, {} bytes".format(file_count, total_bytes))
+    print("{} files, {} bytes, {} symlinks".format(file_count, total_bytes, symlink_count))
 
 if __name__ == "__main__":
     main()
