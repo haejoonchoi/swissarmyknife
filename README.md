@@ -11,6 +11,12 @@ I have deliberately chosen to write these scripts in Python (2.7.x, specifically
 * Python is reasonably portable
 * Python 2.7.x is installed by default on Linux and macOS
 
+Scripts available:
+
+* [Deduper](#deduper)
+* [Photosort](#photosort)
+* [Treesize](#treesize)
+
 ## Deduper
 
 This is a reasonably useful file deduplicator, based on and inspired by [`find_duplicates.py`][find-duplicates].
