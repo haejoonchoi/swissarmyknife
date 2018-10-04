@@ -68,7 +68,7 @@ Additional dependencies: [ExifRead][exifread], `pip install --user exifread`
 ### Usage
 
 ```
-usage: photosort.py [-h] INPUTDIR OUTPUTDIR
+usage: photosort [-h] INPUTDIR OUTPUTDIR
 
 Sort JPEGs into year/month directory structure
 
