@@ -1,6 +1,6 @@
 # Minimal-dependency file utilities in Python
 
-These scripts are designed to perform file and backup housekeeping operations with minimal or no external dependencies: these are specifically intended to be used on constrained environments like network-attached storage devices or Raspberry Pis.
+These scripts are designed to perform file and backup housekeeping operations with minimal or no external dependencies: these are specifically intended to be used on constrained environments like network-attached storage devices, routers or Raspberry Pis.
 
 Unless specifically called out, all these scripts should work on a standard Python 2.7.x installation with no additional package requirements. I have extracted some shared code into a shared module. We'll see how that works out.
 
