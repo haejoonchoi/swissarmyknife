@@ -13,8 +13,9 @@ def run_generate(args):
     list_path = os.path.abspath(args.list_file)
     start_dir = os.path.abspath(args.start_dir)
     with open(list_path, "wt") as f:
-        for base_dir, _, file_names in os.walk(start_dir):
-            for file_name in file_names:
+        for base_dir, subdir_names, file_names in os.walk(start_dir):
+            subdir_names.sort()
+            for file_name in sorted(file_names):
                 full_path = os.path.join(base_dir, file_name)
                 rel_path = os.path.relpath(full_path, start_dir)
                 sig = compute_sha1(full_path, partial=args.partial, include_file_size=False)
