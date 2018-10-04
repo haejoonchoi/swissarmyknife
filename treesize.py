@@ -7,6 +7,8 @@ import argparse
 import os
 import sys
 
+from shared import *
+
 def scan(start_dir, recursive=False):
     for containing_dir, subdir_names, file_names in os.walk(start_dir):
         if not recursive:
@@ -14,22 +16,6 @@ def scan(start_dir, recursive=False):
         for file_name in sorted(file_names):
             full_path = os.path.join(containing_dir, file_name)
             yield full_path
-
-def add_switch_with_inverse(parser, name, default, help=None, inverse_help=None):
-    group = parser.add_mutually_exclusive_group()
-    dest = name.replace("-", "_")
-    group.add_argument(
-        "--{}".format(name),
-        dest=dest,
-        action="store_true",
-        default=default,
-        help=help)
-    group.add_argument(
-        "--no-{}".format(name),
-        dest=dest,
-        action="store_false",
-        default=default,
-        help=inverse_help)
 
 def main(argv=None):
     if argv is None:
@@ -67,7 +53,11 @@ def main(argv=None):
             file_size = os.stat(p).st_size
             total_bytes += file_size
 
-    print("{} files, {} bytes, {} symlinks".format(file_count, total_bytes, symlink_count))
+    print("{} files, {} bytes ({}), {} symlinks".format(
+        file_count,
+        total_bytes,
+        pretty_byte_count(total_bytes),
+        symlink_count))
 
 if __name__ == "__main__":
     main()

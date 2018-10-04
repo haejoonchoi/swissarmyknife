@@ -2,7 +2,7 @@
 
 These scripts are designed to perform file and backup housekeeping operations with minimal or no external dependencies: these are specifically intended to be used on constrained environments like network-attached storage devices or Raspberry Pis.
 
-Unless specifically called out, all these scripts should work on a standard Python 2.7.x installation with no additional package requirements. Furthermore, the individual scripts are more or less self-contained, even if it means that there is copy-and-pasted code between them. This is an intentional design choice, though I might choose to revisit this in the future.
+Unless specifically called out, all these scripts should work on a standard Python 2.7.x installation with no additional package requirements. I have extracted some shared code into a shared module. We'll see how that works out.
 
 I have deliberately chosen to write these scripts in Python (2.7.x, specifically) for the following reasons:
 

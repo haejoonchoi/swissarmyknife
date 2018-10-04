@@ -11,6 +11,8 @@ import os
 import re
 import sys
 
+from shared import *
+
 ##################################################
 
 def prune(d):
@@ -231,9 +233,6 @@ PROGRESS_STEP = 1
 
 BLOCK_SIZE = 1024
 
-GIB_THRESHOLD = 1024 * 1024 * 1024
-MIB_THRESHOLD = 1024 * 1024
-
 DEFAULT_MATCHER = SignatureMatcher()
 MATCHERS = [
     DEFAULT_MATCHER,
@@ -273,14 +272,6 @@ def debug_logging():
 
 def pretty_list(items):
     return "(empty)" if len(items) == 0 else ", ".join(items)
-
-def pretty_byte_count(n):
-    if n >= GIB_THRESHOLD:
-        return "{0:0.1f} GiB".format(float(n) / GIB_THRESHOLD)
-    elif n >= MIB_THRESHOLD:
-        return "{0:0.1f} MiB".format(float(n) / MIB_THRESHOLD)
-    else:
-        return "{} bytes".format(n)
 
 def compare_files(p0, p1):
     with open(p0, "rb") as f:
@@ -334,22 +325,6 @@ def get_strategy(name):
 def is_safe_dir(path):
     parts = path.strip("/").split("/")
     return len(parts) >= 3
-
-def add_switch_with_inverse(parser, name, default, help=None, inverse_help=None):
-    group = parser.add_mutually_exclusive_group()
-    dest = name.replace("-", "_")
-    group.add_argument(
-        "--{}".format(name),
-        dest=dest,
-        action="store_true",
-        default=default,
-        help=help)
-    group.add_argument(
-        "--no-{}".format(name),
-        dest=dest,
-        action="store_false",
-        default=default,
-        help=inverse_help)
 
 def main(argv=None):
     if argv is None:
