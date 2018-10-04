@@ -9,6 +9,7 @@ GITHUB_URL = "https://github.com/rcook/pyfileutils"
 
 GIB_THRESHOLD = 1024 * 1024 * 1024
 MIB_THRESHOLD = 1024 * 1024
+KIB_THRESHOLD = 1024
 
 def compute_sha1(path, partial=False, include_file_size=True, block_size=1024):
     """
@@ -63,9 +64,27 @@ def add_switch_with_inverse(parser, name, default, help=None, inverse_help=None)
         help=inverse_help)
 
 def pretty_byte_count(n):
+    """
+    >>> pretty_byte_count(186129123987)
+    '173.3 GiB'
+    >>> pretty_byte_count(186129123)
+    '177.5 MiB'
+    >>> pretty_byte_count(186129)
+    '181.8 kiB'
+    >>> pretty_byte_count(5000)
+    '4.9 kiB'
+    >>> pretty_byte_count(1024)
+    '1.0 kiB'
+    >>> pretty_byte_count(1000)
+    '1000 bytes'
+    >>> pretty_byte_count(512)
+    '512 bytes'
+    """
     if n >= GIB_THRESHOLD:
         return "{0:0.1f} GiB".format(float(n) / GIB_THRESHOLD)
     elif n >= MIB_THRESHOLD:
         return "{0:0.1f} MiB".format(float(n) / MIB_THRESHOLD)
+    elif n >= KIB_THRESHOLD:
+        return "{0:0.1f} kiB".format(float(n) / KIB_THRESHOLD)
     else:
         return "{} bytes".format(n)
