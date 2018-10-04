@@ -10,7 +10,7 @@ Additional dependencies: [ExifRead][exifread], `pip install --user exifread`
 ## Usage
 
 ```
-usage: photosort [-h] INPUTDIR OUTPUTDIR
+usage: photosort [-h] [--dry-run | --no-dry-run] INPUTDIR OUTPUTDIR
 
 Sort JPEGs into year/month directory structure
 
@@ -19,7 +19,9 @@ positional arguments:
   OUTPUTDIR
 
 optional arguments:
-  -h, --help  show this help message and exit
+  -h, --help    show this help message and exit
+  --dry-run     copy files
+  --no-dry-run  do not copy files
 
 https://github.com/rcook/pyfileutils
 ```
