@@ -28,12 +28,12 @@ usage: deduper [-h] [--match MATCHER] [--strategy STRATEGY]
                   [--dry-run | --no-dry-run] [--verbose | --no-verbose]
                   [--debug | --no-debug] [--force | --no-force]
                   [--progress | --no-progress]
-                  ROOTDIR
+                  STARTDIR
 
 A reasonably useful file deduplicator
 
 positional arguments:
-  ROOTDIR              start directory for scan
+  STARTDIR             start directory for scan
 
 optional arguments:
   -h, --help           show this help message and exit

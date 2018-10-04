@@ -23,22 +23,22 @@ def prune(d):
 class SignatureMatcher(object):
     NAME = "sig"
 
-    def find_duplicates(self, root_dir, debug, show_progress):
+    def find_duplicates(self, start_dir, debug, show_progress):
         # Group by size
-        size_map = self.scan(root_dir, show_progress=show_progress)
-        self.dump(root_dir, size_map)
+        size_map = self.scan(start_dir, show_progress=show_progress)
+        self.dump(start_dir, size_map)
 
         logging.info("Size scan found {} candidate files".format(self.compute_file_count(size_map)))
 
         # Group by partial signature
         sig_map0 = self.compute_signatures(size_map, partial=True, show_progress=show_progress)
-        self.dump(root_dir, sig_map0)
+        self.dump(start_dir, sig_map0)
 
         logging.info("Signature scan found {} candidate files".format(self.compute_file_count(sig_map0)))
 
         # Group by full signature
         sig_map1 = self.compute_signatures(sig_map0, partial=False, show_progress=show_progress)
-        self.dump(root_dir, sig_map1)
+        self.dump(start_dir, sig_map1)
 
         duplicate_file_count, duplicate_byte_count = self.compute_wastage(sig_map1, debug=debug)
         logging.info("Found {} duplicate files occupying {}".format(
@@ -53,10 +53,10 @@ class SignatureMatcher(object):
     def scan(start_dir, show_progress):
         with Progress(show_progress) as p:
             result = {}
-            for root_dir, _, file_names in os.walk(start_dir):
+            for base_dir, _, file_names in os.walk(start_dir):
                 for file_name in file_names:
                     p.step()
-                    path = os.path.join(root_dir, file_name)
+                    path = os.path.join(base_dir, file_name)
                     file_size = os.stat(path).st_size
                     if file_size not in result:
                         result[file_size] = []
@@ -94,10 +94,10 @@ class SignatureMatcher(object):
         return "{}:{}".format(file_size, m.hexdigest())
 
     @staticmethod
-    def dump(root_dir, d):
+    def dump(start_dir, d):
         # Potentially expensive logging
         if debug_logging():
-            entries = ["{}: {}".format(key, pretty_list(map(lambda p: os.path.relpath(p, root_dir), paths))) for key, paths in d.iteritems()]
+            entries = ["{}: {}".format(key, pretty_list(map(lambda p: os.path.relpath(p, start_dir), paths))) for key, paths in d.iteritems()]
             logging.debug("Files: {}".format(pretty_list(entries)))
 
     @staticmethod
@@ -127,10 +127,10 @@ class SignatureMatcher(object):
 class NameMatcher(object):
     NAME = "name"
 
-    def find_duplicates(self, root_dir, debug, show_progress):
+    def find_duplicates(self, start_dir, debug, show_progress):
         with Progress(show_progress) as p:
             result = {}
-            for base_dir, _, file_names in os.walk(root_dir):
+            for base_dir, _, file_names in os.walk(start_dir):
                 for file_name in file_names:
                     p.step()
                     path = os.path.join(base_dir, file_name)
@@ -145,10 +145,10 @@ class NameMatcher(object):
 class FuzzyNameMatcher(object):
     NAME = "fuzzy"
 
-    def find_duplicates(self, root_dir, debug, show_progress):
+    def find_duplicates(self, start_dir, debug, show_progress):
         with Progress(show_progress) as p:
             result = {}
-            for base_dir, _, file_names in os.walk(root_dir):
+            for base_dir, _, file_names in os.walk(start_dir):
                 for file_name in file_names:
                     p.step()
                     path = os.path.join(base_dir, file_name)
@@ -334,8 +334,8 @@ def main(argv=None):
         description="A reasonably useful file deduplicator",
         epilog="https://github.com/rcook/pyfileutils")
     parser.add_argument(
-        "root_dir",
-        metavar="ROOTDIR",
+        "start_dir",
+        metavar="STARTDIR",
         type=os.path.abspath,
         help="start directory for scan")
     parser.add_argument(
@@ -383,7 +383,7 @@ def main(argv=None):
 
     args = parser.parse_args(argv)
 
-    if not args.force and not is_safe_dir(args.root_dir):
+    if not args.force and not is_safe_dir(args.start_dir):
         sys.stderr.write("Safety check failed: If you really want to run this command in this directory use --force?\n")
         sys.exit(1)
 
@@ -397,7 +397,7 @@ def main(argv=None):
 
     logging.info("Finding duplicates using \"{}\" matcher".format(args.matcher.NAME))
     duplicate_map = args.matcher.find_duplicates(
-        args.root_dir,
+        args.start_dir,
         debug=args.debug,
         show_progress=args.progress)
 
