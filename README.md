@@ -1,4 +1,6 @@
-# Swiss Army Knife: minimal-dependency file utilities in Python
+# Swiss Army Knife
+
+_Minimal-dependency file utilities in Python_
 
 These scripts are designed to perform file and backup housekeeping operations with minimal or no external dependencies: these are specifically intended to be used on constrained environments like network-attached storage devices, routers or Raspberry Pis.
 
