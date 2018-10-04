@@ -1,6 +1,6 @@
 # Photosort
 
-* [pyfileutils](README.md)
+* [swissarmyknife](README.md)
 * [Code](photosort)
 
 This script walks a directory tree containing `.jpg` image files and arranges them into a year-month hierarchy.
@@ -23,7 +23,7 @@ optional arguments:
   --dry-run     copy files
   --no-dry-run  do not copy files
 
-https://github.com/rcook/pyfileutils
+https://github.com/rcook/swissarmyknife
 ```
 
 ## Example

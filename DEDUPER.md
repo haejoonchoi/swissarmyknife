@@ -1,6 +1,6 @@
 # Deduper
 
-* [pyfileutils](README.md)
+* [swissarmyknife](README.md)
 * [Code](deduper)
 
 This is a reasonably useful file deduplicator, based on and inspired by [`find_duplicates.py`][find-duplicates].
@@ -34,7 +34,7 @@ optional arguments:
   --progress           show progress
   --no-progress        do not show progress
 
-https://github.com/rcook/pyfileutils
+https://github.com/rcook/swissarmyknife
 ```
 
 ## Example

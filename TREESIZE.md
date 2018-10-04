@@ -1,6 +1,6 @@
 # Treesize
 
-* [pyfileutils](README.md)
+* [swissarmyknife](README.md)
 * [Code](treesize)
 
 This scripts walks a directory tree and outputs the total file count and total file size in bytes. This is useful because the macOS's version of `du` does not support `--apparent-size` unlike GNU's.
@@ -22,7 +22,7 @@ optional arguments:
   --progress      show files as they are processed
   --no-progress   do not show files as they are processed
 
-https://github.com/rcook/pyfileutils
+https://github.com/rcook/swissarmyknife
 ```
 
 ## Example

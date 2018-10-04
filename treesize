@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Treesize
 # Report total file count and file bytes for directory tree
-# https://github.com/rcook/pyfileutils
+# https://github.com/rcook/swissarmyknife
 
 import argparse
 import os

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Photosort
 # Sort JPEGs into year/month directory structure
-# https://github.com/rcook/pyfileutils
+# https://github.com/rcook/swissarmyknife
 
 import argparse
 import datetime

@@ -1,6 +1,6 @@
 # Sha1sumex
 
-* [pyfileutils](README.md)
+* [swissarmyknife](README.md)
 * [Code](sha1sumex)
 
 An improved version of `sha1sum` that will recurse a directory structure
@@ -22,7 +22,7 @@ optional arguments:
   --partial          compute partial (short) signatures
   --no-partial       compute full (long) signatures
 
-https://github.com/rcook/pyfileutils
+https://github.com/rcook/swissarmyknife
 ```
 
 ## Example

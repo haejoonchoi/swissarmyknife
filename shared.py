@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # Shared functions
-# https://github.com/rcook/pyfileutils
+# https://github.com/rcook/swissarmyknife
 
 import hashlib
 import os
 
-GITHUB_URL = "https://github.com/rcook/pyfileutils"
+GITHUB_URL = "https://github.com/rcook/swissarmyknife"
 
 GIB_THRESHOLD = 1024 * 1024 * 1024
 MIB_THRESHOLD = 1024 * 1024

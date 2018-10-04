@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # sha1sumex
 # An improved sha1sum
-# https://github.com/rcook/pyfileutils
+# https://github.com/rcook/swissarmyknife
 
 import argparse
 import os
