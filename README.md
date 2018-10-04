@@ -15,6 +15,7 @@ Scripts available:
 
 * [Deduper](DEDUPER.md)
 * [Photosort](PHOTOSORT.md)
+* [Sha1sumex](SHA1SUMEX.md)
 * [Treesize](TREESIZE.md)
 
 ## Licence

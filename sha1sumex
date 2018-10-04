@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+# sha1sumex
+# An improved sha1sum
+# https://github.com/rcook/pyfileutils
+
+import argparse
+import os
+import sys
+
+from shared import *
+
+def run_generate(args):
+    list_path = os.path.abspath(args.list_file)
+    start_dir = os.path.abspath(args.start_dir)
+    with open(list_path, "wt") as f:
+        for base_dir, _, file_names in os.walk(start_dir):
+            for file_name in file_names:
+                full_path = os.path.join(base_dir, file_name)
+                rel_path = os.path.relpath(full_path, start_dir)
+                f.write("{} {}\n".format(compute_sha1(full_path, include_file_size=False), rel_path))
+
+def run_verify(args):
+    list_path = os.path.abspath(args.list_file)
+    start_dir = os.path.abspath(args.start_dir)
+    match_count = 0
+    mismatch_count = 0
+    with open(list_path, "rt") as f:
+        for _, line in enumerate(f):
+            expected_sig, f = line.strip().split(" ", 1)
+            full_path = os.path.join(start_dir, f)
+            sig = compute_sha1(full_path, include_file_size=False)
+            if sig == expected_sig:
+                match_count += 1
+            else:
+                mismatch_count += 1
+                print("Signature mismatch: {}".format(full_path))
+
+    if mismatch_count == 0:
+        print("OK: All signatures match ({:,} matches, {:,} mismatches)".format(match_count, mismatch_count))
+    else:
+        print("Failure: some signatures did not match ({:,} matches, {:,} mismatches)".format(match_count, mismatch_count))
+
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
+
+    parser = argparse.ArgumentParser(
+        description="Generate/verify SHA1 checksum file",
+        epilog=GITHUB_URL)
+    subparsers = parser.add_subparsers()
+
+    generate_parser = subparsers.add_parser("generate", help="generate checksum file")
+    generate_parser.add_argument("list_file", metavar="LISTFILE", type=os.path.abspath)
+    generate_parser.add_argument("start_dir", metavar="STARTDIR", type=os.path.abspath)
+    generate_parser.set_defaults(func=run_generate)
+
+    verify_parser = subparsers.add_parser("verify", help="verify files in checksum file")
+    verify_parser.add_argument("list_file", metavar="LISTFILE", type=os.path.abspath)
+    verify_parser.add_argument("start_dir", metavar="STARTDIR", type=os.path.abspath)
+    verify_parser.set_defaults(func=run_verify)
+
+    args = parser.parse_args(argv)
+    args.func(args)
+
+if __name__ == "__main__":
+    main()
