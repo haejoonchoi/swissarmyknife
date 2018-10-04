@@ -13,6 +13,8 @@ def scan(start_dir, recursive=False):
     for containing_dir, subdir_names, file_names in os.walk(start_dir):
         if not recursive:
             del subdir_names[:]
+        else:
+            subdir_names.sort()
         for file_name in sorted(file_names):
             full_path = os.path.join(containing_dir, file_name)
             yield full_path
