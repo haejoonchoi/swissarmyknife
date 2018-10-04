@@ -24,7 +24,7 @@ This is a reasonably useful file deduplicator, based on and inspired by [`find_d
 ### Usage
 
 ```
-usage: deduper.py [-h] [--match MATCHER] [--strategy STRATEGY]
+usage: deduper [-h] [--match MATCHER] [--strategy STRATEGY]
                   [--dry-run | --no-dry-run] [--verbose | --no-verbose]
                   [--debug | --no-debug] [--force | --no-force]
                   [--progress | --no-progress]
@@ -56,7 +56,7 @@ https://github.com/rcook/pyfileutils
 ### Example
 
 ```
-python ./deduper.py --strategy keep-first --dry-run --verbose .
+./deduper --strategy keep-first --dry-run --verbose .
 ```
 
 ## Photosort
@@ -85,7 +85,7 @@ https://github.com/rcook/pyfileutils
 ### Example
 
 ```
-python ./photosort.py input-dir output-dir
+./photosort input-dir output-dir
 ```
 
 ## Treesize
@@ -95,7 +95,7 @@ This scripts walks a directory tree and outputs the total file count and total f
 ### Usage
 
 ```
-usage: treesize.py [-h] [--recursive | --no-recursive] STARTDIR
+usage: treesize [-h] [--recursive | --no-recursive] STARTDIR
 
 Report total file count and file bytes for directory tree
 
@@ -115,7 +115,7 @@ https://github.com/rcook/pyfileutils
 ### Example
 
 ```
-python ./treesize.py .
+./treesize .
 ```
 
 ## Licence
