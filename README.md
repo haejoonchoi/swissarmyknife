@@ -20,6 +20,16 @@ Scripts available:
 * [Sha1sumex](SHA1SUMEX.md)
 * [Treesize](TREESIZE.md)
 
+## Downloading in constrained environments
+
+An [installation](install) script is provided to download all tools on environments which do not have direct access to Git:
+
+```
+mkdir swissarmyknife && cd swissarmyknife && wget -qO- https://raw.githubusercontent.com/rcook/swissarmyknife/master/install | sh
+```
+
+Once the directory has been bootstrapped like this, you can just run `install` from this directory in future to update to the latest version of the scripts.
+
 ## Licence
 
 Released under [MIT License][licence]

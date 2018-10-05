@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+
+this_dir=$(cd $(dirname $0); pwd -P)
+required_dir=swissarmyknife
+github_url=https://github.com/rcook/swissarmyknife
+github_branch=master
+
+if [ $(basename $this_dir) != $required_dir ]; then
+  echo Script must be in $required_dir directory
+  exit 1
+fi
+
+if [ -d $this_dir/.git ]; then
+  echo Script must not be run inside Git repo
+  exit 1
+fi
+
+cd $this_dir
+wget -O - $github_url/archive/$github_branch.tar.gz | tar xvz --strip-components=1
