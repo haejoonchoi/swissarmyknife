@@ -20,7 +20,7 @@ positional arguments:
 
 optional arguments:
   -h, --help    show this help message and exit
-  --dry-run     copy files
+  --dry-run     copy files (default)
   --no-dry-run  do not copy files
 
 https://github.com/rcook/swissarmyknife

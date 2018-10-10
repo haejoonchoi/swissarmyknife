@@ -8,7 +8,9 @@ This scripts walks a directory tree and outputs the total file count and total f
 ## Usage
 
 ```
-usage: treesize [-h] [--recursive | --no-recursive] STARTDIR
+usage: treesize [-h] [--recursive | --no-recursive]
+                [--progress | --no-progress]
+                STARTDIR
 
 Report total file count and file bytes for directory tree
 
@@ -17,9 +19,9 @@ positional arguments:
 
 optional arguments:
   -h, --help      show this help message and exit
-  --recursive     recurse into directory
+  --recursive     recurse into directory (default)
   --no-recursive  do not recurse into directory
-  --progress      show files as they are processed
+  --progress      show files as they are processed (default)
   --no-progress   do not show files as they are processed
 
 https://github.com/rcook/swissarmyknife

@@ -9,10 +9,10 @@ This is a reasonably useful file deduplicator, based on and inspired by [`find_d
 
 ```
 usage: deduper [-h] [--match MATCHER] [--strategy STRATEGY]
-                  [--dry-run | --no-dry-run] [--verbose | --no-verbose]
-                  [--debug | --no-debug] [--force | --no-force]
-                  [--progress | --no-progress]
-                  STARTDIR
+               [--dry-run | --no-dry-run] [--no-verbose | --verbose]
+               [--no-debug | --debug] [--no-force | --force]
+               [--no-progress | --progress]
+               STARTDIR
 
 A reasonably useful file deduplicator
 
@@ -23,16 +23,17 @@ optional arguments:
   -h, --help           show this help message and exit
   --match MATCHER      matcher used to compare files
   --strategy STRATEGY  deduplication strategy to employ
-  --dry-run            perform scan but do not delete files
+  --dry-run            perform scan but do not delete files (default)
   --no-dry-run         perform scan and delete files
+  --no-verbose         do not show extra logging (default)
   --verbose            show extra logging
-  --no-verbose         do not show extra logging
+  --no-debug           do not show extra diagnostics (default)
   --debug              show extra diagnostics
-  --no-debug           do not show extra diagnostics
-  --force              override safety check on protected directories
   --no-force           do not override safety check on protected directories
+                       (default)
+  --force              override safety check on protected directories
+  --no-progress        do not show progress (default)
   --progress           show progress
-  --no-progress        do not show progress
 
 https://github.com/rcook/swissarmyknife
 ```

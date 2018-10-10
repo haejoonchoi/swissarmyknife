@@ -50,18 +50,31 @@ def compute_sha1(path, partial=False, include_file_size=True, block_size=1024):
 def add_switch_with_inverse(parser, name, default, help=None, inverse_help=None):
     group = parser.add_mutually_exclusive_group()
     dest = name.replace("-", "_")
-    group.add_argument(
+
+    # Include "(default)" indicator in help message
+    full_help = "{} (default)".format(help) if default else help
+    full_inverse_help = inverse_help if default else "{} (default)".format(inverse_help)
+
+    arg0 = lambda g: g.add_argument(
         "--{}".format(name),
         dest=dest,
         action="store_true",
         default=default,
-        help=help)
-    group.add_argument(
+        help=full_help)
+    arg1 = lambda g: g.add_argument(
         "--no-{}".format(name),
         dest=dest,
         action="store_false",
         default=default,
-        help=inverse_help)
+        help=full_inverse_help)
+
+    # List default option out of group first
+    if default:
+        arg0(group)
+        arg1(group)
+    else:
+        arg1(group)
+        arg0(group)
 
 def pretty_byte_count(n):
     """
