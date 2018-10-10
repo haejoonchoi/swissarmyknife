@@ -1,14 +1,14 @@
-# Sha1sumex
+# Filesig
 
 * [swissarmyknife](README.md)
-* [Code](sha1sumex)
+* [Code](filesig)
 
 An improved version of `sha1sum` that will recurse a directory structure
 
 ## Usage
 
 ```
-usage: sha1sumex [-h] {generate,verify,show} ...
+usage: filesig [-h] {generate,verify,show} ...
 
 An improved sha1sum
 
@@ -27,8 +27,8 @@ https://github.com/rcook/swissarmyknife
 ## Example
 
 ```
-./sha1sumex generate /path/to/files.txt .
-./sha1sumex verify /path/to/files.txt .
+./filesig generate --format=full /path/to/files.txt .
+./filesig verify /path/to/files.txt .
 ```
 
 ## Licence
@@ -37,6 +37,4 @@ Released under [MIT License][licence]
 
 Copyright &copy; 2018, Richard Cook. All rights reserved.
 
-[exifread]: https://pypi.org/project/ExifRead/
-[find-duplicates]: https://gist.github.com/jinie/b51f75fa1ece7c02ca3f/
 [licence]: LICENSE

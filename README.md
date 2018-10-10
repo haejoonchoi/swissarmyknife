@@ -16,8 +16,8 @@ I have deliberately chosen to write these scripts in Python (2.7.x, specifically
 Scripts available:
 
 * [Deduper](DEDUPER.md)
+* [Filesig](FILESIG.md)
 * [Photosort](PHOTOSORT.md)
-* [Sha1sumex](SHA1SUMEX.md)
 * [Treesize](TREESIZE.md)
 
 ## Downloading in constrained environments
