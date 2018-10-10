@@ -9,16 +9,39 @@ import sys
 
 from shared import *
 
+FORMAT_COMMENT_PREFIX = "# format: "
+
+FORMAT_PARTIAL = "partial"
+FORMAT_FULL = "full"
+FORMATS = [
+    FORMAT_PARTIAL,
+    FORMAT_FULL
+]
+DEFAULT_FORMAT = FORMAT_FULL
+
+def compute_signature(full_path, format):
+    if format == FORMAT_PARTIAL:
+        partial = True
+        include_file_size = False
+    elif format == FORMAT_FULL:
+        partial = False
+        include_file_size = False
+    else:
+        raise RuntimeError("Not implemented")
+
+    return compute_sha1(full_path, partial=partial, include_file_size=include_file_size)
+
 def run_generate(args):
     list_path = os.path.abspath(args.list_file)
     start_dir = os.path.abspath(args.start_dir)
     with open(list_path, "wt") as f:
+        f.write("{}{}\n".format(FORMAT_COMMENT_PREFIX, args.format))
         for base_dir, subdir_names, file_names in os.walk(start_dir):
             subdir_names.sort()
             for file_name in sorted(file_names):
                 full_path = os.path.join(base_dir, file_name)
                 rel_path = os.path.relpath(full_path, start_dir)
-                sig = compute_sha1(full_path, partial=args.partial, include_file_size=False)
+                sig = compute_signature(full_path, format=args.format)
                 f.write("{} {}\n".format(sig, rel_path))
                 if args.progress:
                     print("{} {}".format(sig, rel_path))
@@ -28,37 +51,62 @@ def run_verify(args):
     start_dir = os.path.abspath(args.start_dir)
     match_count = 0
     mismatch_count = 0
+    format = DEFAULT_FORMAT
     with open(list_path, "rt") as f:
-        for _, line in enumerate(f):
-            expected_sig, f = line.strip().split(" ", 1)
-            full_path = os.path.join(start_dir, f)
-            if args.progress:
-                print(full_path)
+        line = f.readline()
+        if line.startswith(FORMAT_COMMENT_PREFIX):
+            format = line[len(FORMAT_COMMENT_PREFIX):].strip()
+            if format not in FORMATS:
+                raise RuntimeError("Unsupported format {}".format(format))
+        else:
+            match_count, mismatch_count = process_line(
+                line,
+                match_count,
+                mismatch_count,
+                start_dir,
+                format,
+                args.progress)
 
-            sig = compute_sha1(full_path, partial=args.partial, include_file_size=False)
-            if sig == expected_sig:
-                match_count += 1
-            else:
-                mismatch_count += 1
-                print("Signature mismatch: {}".format(full_path))
+        for _, line in enumerate(f):
+            match_count, mismatch_count = process_line(
+                line,
+                match_count,
+                mismatch_count,
+                start_dir,
+                format,
+                args.progress)
 
     if mismatch_count == 0:
         print("OK: All signatures match ({:,} matches, {:,} mismatches)".format(match_count, mismatch_count))
     else:
         print("Failure: some signatures did not match ({:,} matches, {:,} mismatches)".format(match_count, mismatch_count))
 
+def process_line(line, match_count, mismatch_count, start_dir, format, progress):
+    trimmed_line = line.strip()
+    if trimmed_line.startswith("#") or len(trimmed_line) == 0:
+        return match_count, mismatch_count
+
+    expected_sig, f = trimmed_line.split(" ", 1)
+    full_path = os.path.join(start_dir, f)
+    if progress:
+        print(full_path)
+
+    sig = compute_signature(full_path, format=format)
+    if sig == expected_sig:
+        match_count += 1
+    else:
+        mismatch_count += 1
+        print("Signature mismatch: {}".format(full_path))
+
+    return match_count, mismatch_count
+
 def run_show(args):
     for file_name in args.file_names:
         sig = compute_sha1(file_name, partial=args.partial, include_file_size=False)
         print("{} {}".format(sig, file_name))
 
-def add_partial_switch(parser):
-    add_switch_with_inverse(
-        parser,
-        "partial",
-        default=False,
-        help="compute partial (short) signatures",
-        inverse_help="compute full (long) signatures")
+def add_format_switch(parser):
+    parser.add_argument("--format", choices=FORMATS, default=DEFAULT_FORMAT)
 
 def add_progress_switch(parser):
     add_switch_with_inverse(
@@ -79,23 +127,22 @@ def main(argv=None):
     subparsers = parser.add_subparsers()
 
     generate_parser = subparsers.add_parser("generate", help="generate checksum file")
+    generate_parser.set_defaults(func=run_generate)
     generate_parser.add_argument("list_file", metavar="LISTFILE", type=os.path.abspath)
     generate_parser.add_argument("start_dir", metavar="STARTDIR", type=os.path.abspath)
-    generate_parser.set_defaults(func=run_generate)
-    add_partial_switch(generate_parser)
+    add_format_switch(generate_parser)
     add_progress_switch(generate_parser)
 
     verify_parser = subparsers.add_parser("verify", help="verify files in checksum file")
+    verify_parser.set_defaults(func=run_verify)
     verify_parser.add_argument("list_file", metavar="LISTFILE", type=os.path.abspath)
     verify_parser.add_argument("start_dir", metavar="STARTDIR", type=os.path.abspath)
-    verify_parser.set_defaults(func=run_verify)
-    add_partial_switch(verify_parser)
     add_progress_switch(verify_parser)
 
     show_parser = subparsers.add_parser("show", help="show signatures for one or more files")
-    show_parser.add_argument("file_names", metavar="FILENAMES", nargs="+", type=os.path.abspath)
     show_parser.set_defaults(func=run_show)
-    add_partial_switch(show_parser)
+    show_parser.add_argument("file_names", metavar="FILENAMES", nargs="+", type=os.path.abspath)
+    add_format_switch(show_parser)
 
     args = parser.parse_args(argv)
     args.func(args)
