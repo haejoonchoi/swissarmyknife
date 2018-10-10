@@ -49,6 +49,5 @@ Released under [MIT License][licence]
 
 Copyright &copy; 2018, Richard Cook. All rights reserved.
 
-[exifread]: https://pypi.org/project/ExifRead/
 [find-duplicates]: https://gist.github.com/jinie/b51f75fa1ece7c02ca3f/
 [licence]: LICENSE
