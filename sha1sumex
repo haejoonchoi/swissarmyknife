@@ -12,20 +12,32 @@ from shared import *
 FORMAT_COMMENT_PREFIX = "# format: "
 
 FORMAT_PARTIAL = "partial"
+FORMAT_PARTIAL_WITH_SIZE = "partial-with-size"
 FORMAT_FULL = "full"
+FORMAT_FULL_WITH_SIZE = "full-with-size"
+
 FORMATS = [
     FORMAT_PARTIAL,
-    FORMAT_FULL
+    FORMAT_PARTIAL_WITH_SIZE,
+    FORMAT_FULL,
+    FORMAT_FULL_WITH_SIZE
 ]
-DEFAULT_FORMAT = FORMAT_FULL
+
+DEFAULT_FORMAT = FORMAT_FULL_WITH_SIZE
 
 def compute_signature(full_path, format):
     if format == FORMAT_PARTIAL:
         partial = True
         include_file_size = False
+    elif format == FORMAT_PARTIAL_WITH_SIZE:
+        partial = True
+        include_file_size = True
     elif format == FORMAT_FULL:
         partial = False
         include_file_size = False
+    elif format == FORMAT_FULL_WITH_SIZE:
+        partial = False
+        include_file_size = True
     else:
         raise RuntimeError("Not implemented")
 
