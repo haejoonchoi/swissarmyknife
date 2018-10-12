@@ -5,25 +5,6 @@
 
 An improved version of `sha1sum` that will recurse a directory structure
 
-## Usage
-
-```
-usage: filesig [-h] {generate,verify,show} ...
-
-An improved sha1sum
-
-positional arguments:
-  {generate,verify,show}
-    generate            generate checksum file
-    verify              verify files in checksum file
-    show                show signatures for one or more files
-
-optional arguments:
-  -h, --help            show this help message and exit
-
-https://github.com/rcook/swissarmyknife
-```
-
 ## Example
 
 ```
